@@ -1,0 +1,118 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context="com.dietnme.dietnme.Dashborad_fragment">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="20dp"
+            android:layout_margin="4dp"
+            android:gravity="center_horizontal"
+            android:text="Progress Graph"/>
+    <com.jjoe64.graphview.GraphView
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        app:seriesType="points"
+        android:id="@+id/graph" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_marginTop="20dp"
+        android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1">
+
+    <ProgressBar
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:indeterminate="false"
+        android:layout_centerInParent="true"
+        android:max="100"
+        android:progress="100"
+        android:progressDrawable="@drawable/circle_progress_background" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="65"
+            android:id="@+id/noOfDays"
+            android:textSize="25dp"/>
+        <ProgressBar
+        android:id="@+id/circle_progress_bar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_centerInParent="true"
+        android:max="100"
+        android:rotation="-90"
+        android:indeterminate="false"
+        android:progressDrawable="@drawable/circle_progress_foreground" />
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1">
+
+        <ProgressBar
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_centerInParent="true"
+            android:indeterminate="false"
+            android:max="100"
+            android:progress="100"
+            android:progressDrawable="@drawable/circle_progress_background" />
+
+        <ProgressBar
+            android:id="@+id/circle_progress_bar1"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_centerInParent="true"
+            android:max="100"
+            android:rotation="-90"
+            android:indeterminate="false"
+            android:progressDrawable="@drawable/circle_progress_foreground" />
+  <TextView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_centerInParent="true"
+    android:text="65"
+    android:id="@+id/weightLost"
+    android:textSize="25dp"/>
+    </RelativeLayout>
+    </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_marginTop="4dp"
+                android:textSize="16dp"
+                android:gravity="center_horizontal"
+                android:text="No. of Days Passed"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:textSize="16dp"
+                android:layout_marginTop="4dp"
+                android:gravity="center_horizontal"
+                android:text="Weight Lost (in Kg)"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+        <include layout="@layout/activity_blog" />
+    </LinearLayout>
+</ScrollView>
