@@ -35,7 +35,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="4dp"
             android:padding="4dp"
-            android:src="@drawable/ic_menu_send"
+            android:src="@drawable/ic_send_msg"
             android:id="@+id/sendMessage"/>
     </LinearLayout>
     </android.support.v7.widget.CardView>

@@ -1,5 +1,6 @@
 package in.fisicodietclinic.fisico;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -28,10 +29,10 @@ public class SignIn extends AppCompatActivity {
     EditText userName, password;
     public static final String MyPREFERENCES = "MyPrefs" ;
     Button proceed;
-    String url = "https://arogyam.herokuapp.com/loginapi/";
+    String url = "https://fisicodietclinic.herokuapp.com/loginapi/";
     String msg,user_var,pass_var;
     int res,user_id;
-
+ProgressDialog dialog;
     String user_name;
     SharedPreferences sharedpreferences;
     @Override
@@ -41,6 +42,7 @@ public class SignIn extends AppCompatActivity {
         setContentView(R.layout.activity_sign_in);
         userName = (EditText) findViewById(R.id.userName_edit);
         userName.requestFocus();
+        dialog = new ProgressDialog(this);
         password = (EditText) findViewById(R.id.password_edit);
         proceed = (Button) findViewById(R.id.buttonProceed);
 
@@ -49,16 +51,6 @@ public class SignIn extends AppCompatActivity {
             public void onClick(View view) {
                 user_var = userName.getText().toString();
                 pass_var = password.getText().toString();
-//This is bypassed for now
-                //Change it with your api
-                sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = sharedpreferences.edit();
-
-                editor.putInt("user_id", 123);
-                editor.putString("user_name","abc");
-                editor.commit();
-                finish();
-                startActivity(new Intent(SignIn.this,DashBoard.class));
                 int result = sendR(user_var,pass_var);
                 if(result == 1)
                 {
@@ -77,7 +69,8 @@ public class SignIn extends AppCompatActivity {
     {
 
 
-
+        dialog.setMessage("Loading...");
+        dialog.show();
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
                     @Override
@@ -96,22 +89,22 @@ public class SignIn extends AppCompatActivity {
                                 startActivity(i);
                                 sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
                                 SharedPreferences.Editor editor = sharedpreferences.edit();
-
                                 editor.putInt("user_id", user_id);
                                 editor.putString("user_name",user_name);
+                                editor.putString("email",username);
                                 editor.commit();
                             }
+                            dialog.cancel();
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                        Toast.makeText(SignIn.this,response,Toast.LENGTH_LONG).show();
-                        Toast.makeText(SignIn.this,msg+""+res+"",Toast.LENGTH_LONG).show();
 
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        dialog.cancel();
                         Toast.makeText(SignIn.this,error.toString(),Toast.LENGTH_LONG).show();
                     }
                 }){
@@ -125,7 +118,6 @@ public class SignIn extends AppCompatActivity {
             }
 
         };
-
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         requestQueue.add(stringRequest);
         return  res;

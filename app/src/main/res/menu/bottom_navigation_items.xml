@@ -4,20 +4,20 @@
     <item
         android:id="@+id/dashboard"
         android:enabled="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/dashboard"
         android:title="DashBoard"
         app:showAsAction="always"/>
     <item
         android:id="@+id/diet"
         android:enabled="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/ic_diet"
         android:title="Diet"
         app:showAsAction="always"
          />
     <item
         android:id="@+id/update"
         android:enabled="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/ic_update"
         android:title="Update"
         app:showAsAction="always"
 

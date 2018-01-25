@@ -6,13 +6,16 @@ import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,24 +37,31 @@ import com.jjoe64.graphview.series.LineGraphSeries;
 import com.jjoe64.graphview.series.PointsGraphSeries;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import in.fisicodietclinic.fisico.models.Blog;
+
+import static in.fisicodietclinic.fisico.DashBoard.MyPREFERENCES;
 
 
 public class Dashborad_fragment extends Fragment {
 
     ProgressBar progressBar1,progressBar2;
     TextView weightLost,noOfDays;
-
+    GraphView graph;
     private List<Blog> blogList;
     Blog blog;
     ProgressDialog dialog;
+    String username;
     CardView cardOne,cardTwo,cardThree,cardFour;
     TextView dateOne,dateTwo,dateThree,dateFour,titleOne,titleTwo,titleThree,titleFour;
+    SharedPreferences sharedpreferences;
 
 
     private OnFragmentInteractionListener mListener;
@@ -80,65 +90,14 @@ public class Dashborad_fragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_dashborad_fragment, container, false);
-        GraphView graph = (GraphView) rootView.findViewById(R.id.graph);
+        graph = (GraphView) rootView.findViewById(R.id.graph);
         AppCompatActivity activity = (AppCompatActivity) getActivity();
         activity.getSupportActionBar().setTitle("DashBoard");
-        graph.getViewport().setXAxisBoundsManual(true);
-        graph.getViewport().setMinX(0);
-        graph.getViewport().setMaxX(90);
-        graph.getViewport().setMinY(25);
-        LineGraphSeries<DataPoint> series1 = new LineGraphSeries<>(new DataPoint[] {
-                new DataPoint(0, 50),
-                new DataPoint(5, 50),
-                new DataPoint(10, 50),
-                new DataPoint(15, 49),
-                new DataPoint(20, 49),
-                new DataPoint(25, 49),
-                new DataPoint(30, 48),
-                new DataPoint(35, 46),
-                new DataPoint(40, 50),
-                new DataPoint(45, 48),
-                new DataPoint(50, 48),
-                new DataPoint(55, 47),
-                new DataPoint(60, 46),
-                new DataPoint(65, 45),
-                new DataPoint(70, 44),
-                new DataPoint(75, 43),
-                new DataPoint(80, 42),
-                new DataPoint(85, 41),
-                new DataPoint(90, 40)
+//
 
-        });
-        graph.getViewport().setScrollable(true); // enables horizontal scrolling
-        series1.setColor(getResources().getColor(R.color.colorPrimary));
-        graph.addSeries(series1);
-
-        PointsGraphSeries<DataPoint> series = new PointsGraphSeries<>(new DataPoint[] {
-                new DataPoint(0, 50),
-                new DataPoint(5, 50),
-                new DataPoint(10, 50),
-                new DataPoint(15, 49),
-                new DataPoint(20, 49),
-                new DataPoint(25, 49),
-                new DataPoint(30, 48),
-                new DataPoint(35, 46),
-                new DataPoint(40, 50),
-                new DataPoint(45, 48),
-                new DataPoint(50, 48),
-                new DataPoint(55, 47),
-                new DataPoint(60, 46),
-                new DataPoint(65, 45),
-                new DataPoint(70, 44),
-                new DataPoint(75, 43),
-                new DataPoint(80, 42),
-                new DataPoint(85, 41),
-                new DataPoint(90, 40)
-        });
-        graph.addSeries(series);
-        series.setShape(PointsGraphSeries.Shape.POINT);
-        graph.getViewport().setScrollable(true); // enables horizontal scrolling
-        series.setSize(8.0f);
-        series.setColor(getResources().getColor(R.color.colorAccent));
+        sharedpreferences = getActivity().getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
+        username = sharedpreferences.getString("user_name","abc");
+        Log.d("user name",username);
         progressBar1 = (ProgressBar) rootView.findViewById(R.id.circle_progress_bar);
         progressBar2 = (ProgressBar) rootView.findViewById(R.id.circle_progress_bar1);
         weightLost = (TextView) rootView.findViewById(R.id.weightLost);
@@ -174,8 +133,12 @@ public class Dashborad_fragment extends Fragment {
         titleThree = (TextView) rootView.findViewById(R.id.text_title_three);
         titleFour = (TextView) rootView.findViewById(R.id.text_title_four);
 
+        int result = fetchDashboardData("http://fisicodietclinic.herokuapp.com/dashboard/");
+        if(result==1){
+            sendR("http://arogyam.rjchoreography.com/wp-json/wp/v2/posts?orderby=date&per_page=4");
+        }
 
-        sendR("http://arogyam.rjchoreography.com/wp-json/wp/v2/posts?orderby=date&per_page=4");
+
 
         cardOne.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -237,10 +200,125 @@ public class Dashborad_fragment extends Fragment {
 
 
 
-    public void sendR(String url)
+    public int fetchDashboardData(String url)
     {
+       dialog.setMessage("Loading");
         dialog.show();
 
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+
+                        Log.d("Response", response);
+                        DataPoint[] values;
+                        try {
+                            int point = 0, count;
+                            JSONArray array = new JSONArray(response);
+                            Log.d("size", array.length() + "");
+                            count = array.length() * 4;
+                            Log.d("count1",count+"");
+                            for (int i = array.length() - 1; i >= 0; i--) {
+                                JSONObject object = array.getJSONObject(i);
+                                Log.d("value",object.getString("weektwo"));
+                                if (object.getString("weekone").equals("null")) {
+                                    count--;
+                                    Log.d("count2",count+""+ object.getString("weekone"));
+
+                                }
+                                if (object.getString("weektwo").equals("null")) {
+                                    count--;
+                                    Log.d("count2two",count+""+ object.getString("weektwo"));
+                                }
+                                if (object.getString("weekthree").equals("null")) {
+                                    count--;
+                                }
+                                if (object.getString("weekfour").equals("null")) {
+                                    count--;
+                                }
+                            }
+                            Log.d("count3",count+"");
+
+                            int index=0;
+                            values = new DataPoint[count];
+                            for (int i=array.length()-1;i>=0;i--) {
+                                JSONObject object = array.getJSONObject(i);
+                                if(!(object.getString("weekone").equals("null"))){
+                                    DataPoint v = new DataPoint(point++,Integer.parseInt(object.getString("weekone")));
+                                    values[index++]=v;
+                                    Log.d("Point : ",point+Integer.parseInt(object.getString("weekone"))+"");
+                                }
+                                if(!(object.getString("weektwo").equals("null"))){
+                                    DataPoint v = new DataPoint(point++,Integer.parseInt(object.getString("weektwo")));
+                                    values[index++]=v;
+                                    Log.d("Point : ",point+Integer.parseInt(object.getString("weekone"))+"");
+                                }
+                                if(!(object.getString("weekthree").equals("null"))){
+                                    DataPoint v = new DataPoint(point++,Integer.parseInt(object.getString("weekthree")));
+                                    values[index++]=v;
+                                    Log.d("Point : ",point+Integer.parseInt(object.getString("weekone"))+"");
+                                }
+                                if(!(object.getString("weekfour").equals("null"))){
+                                    DataPoint v = new DataPoint(point++,Integer.parseInt(object.getString("weekfour")));
+                                    values[index++]=v;
+                                    Log.d("Point : ",point+Integer.parseInt(object.getString("weekone"))+"");
+                                }
+                            }
+
+                             graph.getViewport().setXAxisBoundsManual(true);
+
+                             graph.getViewport().setMinX(0);
+                             graph.getViewport().setMaxX(20);
+
+                            PointsGraphSeries<DataPoint> series = new PointsGraphSeries<>(values);
+                            LineGraphSeries<DataPoint> series1 = new LineGraphSeries<>(values);
+                            graph.getViewport().setScrollable(true); // enables horizontal scrolling
+                            series1.setColor(getResources().getColor(R.color.colorPrimary));
+                            graph.addSeries(series1);
+                            graph.addSeries(series);
+                            series.setShape(PointsGraphSeries.Shape.POINT);
+                            graph.getViewport().setScrollable(true); // enables horizontal scrolling
+                            series.setSize(8.0f);
+                            series.setColor(getResources().getColor(R.color.colorAccent));
+//                            } catch (JSONException e1) {
+//                            e1.printStackTrace();
+
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        dialog.dismiss();
+                        Toast.makeText(getActivity(),error.toString(),Toast.LENGTH_LONG).show();
+                    }
+                }){
+
+            @Override
+            protected Map<String,String> getParams(){
+                Map<String,String> params = new HashMap<String, String>();
+                params.put("usernam",username);
+
+
+                return params;
+            }
+
+        };
+
+
+        RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
+        requestQueue.add(stringRequest);
+
+        return 1;
+    }
+
+
+    public void sendR(String url)
+    {
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {

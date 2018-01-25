@@ -80,7 +80,7 @@ public class DateSelection extends AppCompatActivity {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
 
-        sendR("http://arogyam.herokuapp.com/dates/");
+        sendR("http://fisicodietclinic.herokuapp.com/dates/");
 
         try {
             Glide.with(this).load(R.drawable.bgdates).into((ImageView) findViewById(R.id.backdrop));
@@ -174,7 +174,7 @@ public class DateSelection extends AppCompatActivity {
 
     public void sendR(String url_string)
     {
-
+        dialog.setMessage("Loading...");
         dialog.show();
 
 
@@ -238,7 +238,7 @@ public class DateSelection extends AppCompatActivity {
             @Override
             protected Map<String,String> getParams(){
                 Map<String,String> params = new HashMap<String, String>();
-                params.put("usernam","abc");
+                params.put("usernam",username);
 
                 return params;
             }

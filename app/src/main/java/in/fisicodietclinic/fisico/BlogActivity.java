@@ -71,6 +71,7 @@ public class BlogActivity extends AppCompatActivity{
 
     public void sendR(String url)
     {
+        dialog.setMessage("Loading...");
         dialog.show();
 
 

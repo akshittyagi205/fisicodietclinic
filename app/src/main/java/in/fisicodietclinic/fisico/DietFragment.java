@@ -123,7 +123,7 @@ public class DietFragment extends Fragment {
 
     public void sendR(String url_string, final String date)
     {
-
+        dialog.setMessage("Loading...");
         dialog.show();
 
 

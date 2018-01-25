@@ -89,13 +89,13 @@ public class DietActivity extends AppCompatActivity {
         String date_to_be_passed = formattedDay+formatedMonth+formatedYear;
         Log.d("mtag",date_to_be_passed);
 
-        sendR("http://arogyam.herokuapp.com/dietdata/",date_to_be_passed);
+        sendR("http://fisicodietclinic.herokuapp.com/getdiet/",date_to_be_passed);
     }
 
 
     public void sendR(String url_string, final String date)
     {
-
+        dialog.setMessage("Loading...");
         dialog.show();
 
 
@@ -209,7 +209,7 @@ public class DietActivity extends AppCompatActivity {
             @Override
             protected Map<String,String> getParams(){
                 Map<String,String> params = new HashMap<String, String>();
-                params.put("usernam","abc");
+                params.put("usernam",username);
                 params.put("dayo",date);
 
                 return params;

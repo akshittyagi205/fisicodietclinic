@@ -63,14 +63,23 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder> 
                     LinearLayout.LayoutParams.WRAP_CONTENT)) ;
             params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
             params.setMargins(100,2,5,0);
+            holder.chatText.setTextColor(Color.parseColor("#ffffff"));
+            holder.chatText.setTextSize(16);
             holder.chatBackground.setLayoutParams(params);
-            holder.chatBackground.setBackgroundColor(Color.CYAN);
+            holder.chatBackground.setBackgroundColor(Color.parseColor("#FA864C"));
         }
         else{
             RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT)) ;
             params.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-
+            if(chatModel.getMessage().equalsIgnoreCase("Answer awaited")){
+                holder.chatText.setTextColor(Color.parseColor("#9e9e9e"));
+                holder.chatText.setTextSize(14);
+            }
+            else{
+                holder.chatText.setTextColor(Color.parseColor("#000000"));
+                holder.chatText.setTextSize(16);
+            }
             params.setMargins(5,2,100,0);
             holder.chatBackground.setLayoutParams(params);
             holder.chatBackground.setBackgroundColor(Color.WHITE);

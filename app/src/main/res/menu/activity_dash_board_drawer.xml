@@ -4,27 +4,27 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_blog"
-            android:icon="@mipmap/ic_launcher"
+            android:icon="@drawable/ic_blog"
             android:title="Blog" />
         <item
             android:id="@+id/nav_bmi"
-            android:icon="@mipmap/ic_launcher"
+            android:icon="@drawable/ic_bmi"
             android:title="BMI Calculator" />
         <item
             android:id="@+id/nav_uploadImage"
-            android:icon="@mipmap/ic_launcher"
+            android:icon="@drawable/ic_upload_image"
             android:title="Upload Images" />
         <item
             android:id="@+id/nav_testimonials"
-            android:icon="@mipmap/ic_launcher"
-            android:title="Testimoials" />
+            android:icon="@drawable/ic_client_story"
+            android:title="Client Stories" />
     </group>
 
     <item android:title="Others">
         <menu>
             <item
                 android:id="@+id/nav_shareAndEarn"
-                android:icon="@mipmap/ic_launcher"
+                android:icon="@drawable/ic_share"
                 android:title="Share and Earn" />
         </menu>
     </item>
