@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "5561669490",
+    "firebase_url": "https://fisico-6dd02.firebaseio.com",
+    "project_id": "fisico-6dd02",
+    "storage_bucket": "fisico-6dd02.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:5561669490:android:04da860f2c799447",
+        "android_client_info": {
+          "package_name": "in.fisicodietclinic.fisico"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "5561669490-1ej9gh21n2r6tljlvp2t4p9aenjpmuh9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "in.fisicodietclinic.fisico",
+            "certificate_hash": "9b801420af8cbcbc72a335f32a814123ec1c4aec"
+          }
+        },
+        {
+          "client_id": "5561669490-lt1v6g6spnphkakfploh96mh6q5vpsr7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDn4FqHl4KKNAwqDLIDkzbADpBq4-cUCmw"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "5561669490-lt1v6g6spnphkakfploh96mh6q5vpsr7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
