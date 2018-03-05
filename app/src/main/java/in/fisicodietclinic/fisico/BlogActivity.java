@@ -51,20 +51,20 @@ public class BlogActivity extends AppCompatActivity{
         recyclerView = (RecyclerView) findViewById(R.id.re);
         getSupportActionBar().setTitle("Blog");
 
-        sendR("http://arogyam.rjchoreography.com/wp-json/wp/v2/posts?orderby=date&per_page=4");
+        sendR("https://www.googleapis.com/blogger/v3/blogs/6799741378082704735/posts?key=AIzaSyAB7OcaTZFCD0rFXcdLLZm6MqFWMrwN7ag");
 
-        recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), recyclerView, new ClickListener() {
-            @Override
-            public void onClick(View view, int position) {
-                Blog b = blogList.get(position);
-                openChrome(b.getLink());
-            }
-
-            @Override
-            public void onLongClick(View view, int position) {
-
-            }
-        }));
+//        recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), recyclerView, new ClickListener() {
+//            @Override
+//            public void onClick(View view, int position) {
+//                Blog b = blogList.get(position);
+//                openChrome(b.getLink());
+//            }
+//
+//            @Override
+//            public void onLongClick(View view, int position) {
+//
+//            }
+//        }));
     }
 
 
@@ -81,23 +81,23 @@ public class BlogActivity extends AppCompatActivity{
                     public void onResponse(String response) {
                         blogList=new ArrayList<>();
                         try {
-
-
-                            JSONArray array = new JSONArray(response);
-                            for (int i=0;i<4;i++) {
-                                JSONObject object = array.getJSONObject(i);
-                                String date= object.getString("date");
-                                String link = object.getString("link");
-                                JSONObject title1 = object.getJSONObject("title");
-                                String title = title1.getString("rendered");
+                                JSONObject json = new JSONObject(response);
+                                JSONArray array = json.getJSONArray("items");
+                                for (int i=0;i<array.length();i++) {
+                                    JSONObject object = array.getJSONObject(i);
+                                    String date= object.getString("published");
+                                    String link = object.getString("url");
+                                    String title = object.getString("title");
+                                    if(title.equals("")){
+                                        title+="BLOG POST BY VIDHI CHAWLA";
+                                    }
                                 blog = new Blog(title,date,link);
                                 blogList.add(blog);
                                 Log.d("lolol",title);
                             }
                             dialog.dismiss();
-                            blogAdapter = new BlogAdapter(blogList);
+                            blogAdapter = new BlogAdapter(blogList,BlogActivity.this);
                             LinearLayoutManager mLayoutManager = new LinearLayoutManager(BlogActivity.this);
-                            mLayoutManager.setStackFromEnd(true);
                             recyclerView.setLayoutManager(mLayoutManager);
                             recyclerView.setAdapter(blogAdapter);
                             blogAdapter.notifyDataSetChanged();
@@ -122,6 +122,10 @@ public class BlogActivity extends AppCompatActivity{
         requestQueue.add(stringRequest);
 
     }
+
+//    public static void sendIntent(Intent i){
+//       // startActivity(Intent.createChooser(i,"Share Link"));
+//    }
 
     public  void openChrome(String url)
     {

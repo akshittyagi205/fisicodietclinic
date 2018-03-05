@@ -1,10 +1,15 @@
 package in.fisicodietclinic.fisico;
 
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.ActivityNotFoundException;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
@@ -20,6 +25,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -95,7 +101,15 @@ public class DietFragment extends Fragment {
         Log.d("date",yy+""+month+""+day+"");
         String date=day+""+month+""+yy;
 
-        sendR("http://arogyam.herokuapp.com/dietdata/",date);
+        TextView dietText = (TextView) view.findViewById(R.id.message_text_id);
+
+        if(username.equalsIgnoreCase("Guest User")){
+            dietText.setText("You are not enrolled yet!");
+            showDialog();
+        }
+        else {
+            sendR("http://fisicodietclinic.herokuapp.com/getdiet/", date);
+        }
         return view;
     }
 
@@ -110,15 +124,51 @@ public class DietFragment extends Fragment {
         int id = item.getItemId();
 
         if (id == R.id.show) {
-
-            Intent intent = new Intent(getActivity(),DateSelection.class);
-            startActivity(intent);
-
+            if(!(username.equalsIgnoreCase("Guest User"))) {
+                Intent intent = new Intent(getActivity(), DateSelection.class);
+                startActivity(intent);
+            }else{
+                Toast.makeText(getActivity().getApplicationContext(),"You are not enrolled yet!",Toast.LENGTH_SHORT).show();
+                showDialog();
+            }
             // do something here
         }
         return super.onOptionsItemSelected(item);
     }
 
+
+    public void showDialog(){
+
+        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
+        // Get the layout inflater
+        alertDialog.setTitle("Enroll with Fisico")
+                .setMessage("Do you want to enroll now?")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        try {
+                            Intent it = new Intent("android.intent.action.MAIN");
+                            it.setComponent(ComponentName.unflattenFromString("com.android.chrome/com.android.chrome.Main"));
+                            it.addCategory("android.intent.category.LAUNCHER");
+                            it.setData(Uri.parse("http://fisicodietclinic.in/"));
+                            startActivity(it);
+                        }
+                        catch(ActivityNotFoundException e) {
+                            // Chrome is not installed
+                            Intent it = new Intent(Intent.ACTION_VIEW, Uri.parse("http://fisicodietclinic.in/"));
+                            startActivity(it);
+                        }
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                }).setIcon(R.mipmap.ic_logo_fisico)
+                .show();
+
+    }
 
 
     public void sendR(String url_string, final String date)

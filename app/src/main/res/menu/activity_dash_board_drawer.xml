@@ -24,8 +24,24 @@
         <menu>
             <item
                 android:id="@+id/nav_shareAndEarn"
-                android:icon="@drawable/ic_share"
-                android:title="Share and Earn" />
+                android:icon="@drawable/ic_calorie_chart"
+                android:title="Calories Chart" />
+        </menu>
+    </item>
+    <item android:title="Social">
+        <menu>
+            <item
+                android:id="@+id/nav_facebook"
+                android:icon="@drawable/ic_facebook"
+                android:title="Facebook" />
+            <item
+                android:id="@+id/nav_instagram"
+                android:icon="@drawable/ic_instagram"
+                android:title="Instagram" />
+            <item
+                android:id="@+id/nav_youtube"
+                android:icon="@drawable/ic_youtube"
+                android:title="Youtube" />
         </menu>
     </item>
 

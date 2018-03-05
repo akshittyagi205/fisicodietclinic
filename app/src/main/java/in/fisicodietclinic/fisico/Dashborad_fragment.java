@@ -1,10 +1,12 @@
 package in.fisicodietclinic.fisico;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -50,10 +52,10 @@ import in.fisicodietclinic.fisico.models.Blog;
 import static in.fisicodietclinic.fisico.DashBoard.MyPREFERENCES;
 
 
-public class Dashborad_fragment extends Fragment {
+public class Dashborad_fragment extends Fragment implements View.OnClickListener{
 
     ProgressBar progressBar1,progressBar2;
-    TextView weightLost,noOfDays;
+    TextView weightLost,noOfDays,share1,share2,share3,share4;
     GraphView graph;
     private List<Blog> blogList;
     Blog blog;
@@ -96,13 +98,20 @@ public class Dashborad_fragment extends Fragment {
 //
 
         sharedpreferences = getActivity().getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
-        username = sharedpreferences.getString("user_name","abc");
+        username = sharedpreferences.getString("user_name","Guest User");
         Log.d("user name",username);
         progressBar1 = (ProgressBar) rootView.findViewById(R.id.circle_progress_bar);
         progressBar2 = (ProgressBar) rootView.findViewById(R.id.circle_progress_bar1);
         weightLost = (TextView) rootView.findViewById(R.id.weightLost);
         noOfDays = (TextView) rootView.findViewById(R.id.noOfDays);
-
+        share1 = (TextView) rootView.findViewById(R.id.shareBlog1);
+        share1.setOnClickListener(this);
+        share2 = (TextView) rootView.findViewById(R.id.shareBlog2);
+        share2.setOnClickListener(this);
+        share3 = (TextView) rootView.findViewById(R.id.shareBlog3);
+        share3.setOnClickListener(this);
+        share4 = (TextView) rootView.findViewById(R.id.shareBlog4);
+        share4.setOnClickListener(this);
         //Replace 65 with no of days passed
         int count1=65;
         noOfDays.setText(String.valueOf(count1));
@@ -133,12 +142,39 @@ public class Dashborad_fragment extends Fragment {
         titleThree = (TextView) rootView.findViewById(R.id.text_title_three);
         titleFour = (TextView) rootView.findViewById(R.id.text_title_four);
 
-        int result = fetchDashboardData("http://fisicodietclinic.herokuapp.com/dashboard/");
-        if(result==1){
-            sendR("http://arogyam.rjchoreography.com/wp-json/wp/v2/posts?orderby=date&per_page=4");
+        if(!(username.equalsIgnoreCase("Guest user"))) {
+            int result = fetchDashboardData("http://fisicodietclinic.herokuapp.com/dashboard/");
+            if (result == 1) {
+                sendR("https://www.googleapis.com/blogger/v3/blogs/6799741378082704735/posts?key=AIzaSyAB7OcaTZFCD0rFXcdLLZm6MqFWMrwN7ag");
+            }
         }
-
-
+        else{
+            dialog.setMessage("Loading");
+            dialog.show();
+            //Replace 65 with no of days passed
+            noOfDays.setText(String.valueOf(0));
+            progressBar1.setProgress(0);
+            //Replace 50 with the percentage of weight lost
+            progressBar2.setProgress(0);
+            //Replace i with weight lost (kg)
+            weightLost.setText(String.valueOf(0));
+            sendR("https://www.googleapis.com/blogger/v3/blogs/6799741378082704735/posts?key=AIzaSyAB7OcaTZFCD0rFXcdLLZm6MqFWMrwN7ag");
+            PointsGraphSeries<DataPoint> series = new PointsGraphSeries<>(new DataPoint[]{
+                    new DataPoint(0,0)
+            });
+            LineGraphSeries<DataPoint> series1 = new LineGraphSeries<>(new DataPoint[]{
+                    new DataPoint(0,0)
+            });
+            graph.getViewport().setScrollable(true); // enables horizontal scrolling
+            series1.setColor(getResources().getColor(R.color.colorPrimary));
+            graph.addSeries(series1);
+            graph.addSeries(series);
+            series.setShape(PointsGraphSeries.Shape.POINT);
+            graph.getViewport().setScrollable(true); // enables horizontal scrolling
+            series.setSize(8.0f);
+            series.setColor(getResources().getColor(R.color.colorAccent));
+            showDialog();
+        }
 
         cardOne.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -176,6 +212,42 @@ public class Dashborad_fragment extends Fragment {
         }
     }
 
+
+
+    public void showDialog(){
+
+        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
+        // Get the layout inflater
+        alertDialog.setTitle("Enroll with Fisico")
+                .setMessage("Do you want to enroll now?")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        try {
+                            Intent it = new Intent("android.intent.action.MAIN");
+                            it.setComponent(ComponentName.unflattenFromString("com.android.chrome/com.android.chrome.Main"));
+                            it.addCategory("android.intent.category.LAUNCHER");
+                            it.setData(Uri.parse("http://fisicodietclinic.in/"));
+                            startActivity(it);
+                        }
+                        catch(ActivityNotFoundException e) {
+                            // Chrome is not installed
+                            Intent it = new Intent(Intent.ACTION_VIEW, Uri.parse("http://fisicodietclinic.in/"));
+                            startActivity(it);
+                        }
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                }).setIcon(R.mipmap.ic_logo_fisico)
+                .show();
+
+    }
+
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -191,6 +263,23 @@ public class Dashborad_fragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onClick(View view) {
+        Intent share = new Intent(Intent.ACTION_SEND);
+        share.setType("text/plain");
+        if(view == share1) {
+            share.putExtra(Intent.EXTRA_TEXT,blogList.get(0).getLink());
+        } else if(view==share2){
+            share.putExtra(Intent.EXTRA_TEXT,blogList.get(1).getLink());
+        }else if(view == share3){
+            share.putExtra(Intent.EXTRA_TEXT,blogList.get(2).getLink());
+        }else if(view == share4){
+            share.putExtra(Intent.EXTRA_TEXT,blogList.get(3).getLink());
+        }
+        startActivity(Intent.createChooser(share,"Share Link"));
+
     }
 
 
@@ -327,14 +416,18 @@ public class Dashborad_fragment extends Fragment {
                         blogList=new ArrayList<>();
                         try {
 
-
-                            JSONArray array = new JSONArray(response);
+                                Log.d("Response",response);
+                            JSONObject json = new JSONObject(response);
+                            JSONArray array = json.getJSONArray("items");
                             for (int i=0;i<4;i++) {
                                 JSONObject object = array.getJSONObject(i);
-                                String date= object.getString("date");
-                                String link = object.getString("link");
-                                JSONObject title1 = object.getJSONObject("title");
-                                String title = title1.getString("rendered");
+                                String date= object.getString("published");
+                                String link = object.getString("url");
+//                                JSONObject title1 = object.getJSONObject("title");
+                                String title = object.getString("title");
+                                if(title.equals("")){
+                                    title+="BLOG POST BY VIDHI CHAWLA";
+                                }
                                 blog = new Blog(title,date,link);
                                 blogList.add(blog);
                                 Log.d("lolol",title);

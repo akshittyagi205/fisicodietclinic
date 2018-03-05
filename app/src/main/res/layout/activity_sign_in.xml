@@ -73,12 +73,61 @@ android:layout_marginTop="10dp"
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="PROCEED"
+        android:text="Login"
         android:layout_marginTop="@dimen/top_margin"
         android:background="@color/colorAccent"
         android:textColor="@android:color/white"
         android:id="@+id/buttonProceed"
         android:layout_gravity="bottom"
+        />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp">
+
+        <View
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:background="#ddd"
+            android:layout_gravity="center"
+            android:layout_height="1dp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="or"
+            android:layout_gravity="center"
+            android:textSize="16dp"
+            android:padding="5dp"
+            />
+        <View
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_gravity="center"
+            android:background="#ddd"
+            android:layout_height="1dp"/>
+
+
+    </LinearLayout>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:background="@color/colorAccent"
+        android:paddingRight="20dp"
+        android:paddingLeft="20dp"
+        android:id="@+id/signupBtn"
+        android:textColor="@color/white"
+        android:text="Signup here"
+        />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="8dp"
+        android:id="@+id/forgotPass"
+        android:textSize="16sp"
+        android:gravity="center"
+        android:text="Forgot password? Tap for more options"
         />
 </LinearLayout>
 

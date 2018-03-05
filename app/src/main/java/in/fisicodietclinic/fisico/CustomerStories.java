@@ -44,6 +44,7 @@ public class CustomerStories extends YouTubeBaseActivity implements YouTubePlaye
     public static final String CHANNEL_ID = "UCT9eLubRV6nolY-N_Z_sk-w";
     String VIDEO_ID="-yXBiDHuX_c",mTitle="FISICO DIET CLINIC INTRO VIDEO";
     YouTubePlayer mPlayer;
+    String url = "https://fisicodietclinic.herokuapp.com/youthub/";
     TextView title;
     Toolbar toolbar;
     ArrayList<Story> stories;
@@ -58,23 +59,18 @@ public class CustomerStories extends YouTubeBaseActivity implements YouTubePlaye
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         title = (TextView) findViewById(R.id.titleVideo);
         dialog = new ProgressDialog(this);
-        dialog.setMessage("Loading...");
-        dialog.show();
+
         stories = new ArrayList<>();
-        stories.add(new Story("TESTIMONIAL OF RAKHI SHARMA","https://i.ytimg.com/vi/VVQMkfVkxMY/default.jpg","VVQMkfVkxMY"));
-        stories.add(new Story("TESTIMONIAL OF HIMANI TANVAR","https://i.ytimg.com/vi/MBfQMcST6ms/default.jpg","MBfQMcST6ms"));
-        stories.add(new Story("TESTIMONIAL PPT OF VAISHNAVI","https://i.ytimg.com/vi/hWRwcpMRsLk/default.jpg","hWRwcpMRsLk"));
-        stories.add(new Story("TESTIMONIAL VIDEO OF V SUDARSHAN","https://i.ytimg.com/vi/ReKc7YofkNw/default.jpg","ReKc7YofkNw"));
-        stories.add(new Story("TESTIMONIAL OF HEENA","https://i.ytimg.com/vi/bnEcXq2ZxCo/default.jpg","bnEcXq2ZxCo"));
-        stories.add(new Story("TESTIMONIAL OF SAUMYA SACHDEVA","https://i.ytimg.com/vi/eJW0gMJdNy0/default.jpg","eJW0gMJdNy0"));
-        stories.add(new Story("TESTIMONIAL OF SONAL MAKKER","https://i.ytimg.com/vi/SxQAGFtqUQw/default.jpg","SxQAGFtqUQw"));
+        sendR(url);
+//        stories.add(new Story("TESTIMONIAL OF RAKHI SHARMA","https://i.ytimg.com/vi/VVQMkfVkxMY/default.jpg","VVQMkfVkxMY"));
+//        stories.add(new Story("TESTIMONIAL OF HIMANI TANVAR","https://i.ytimg.com/vi/MBfQMcST6ms/default.jpg","MBfQMcST6ms"));
+//        stories.add(new Story("TESTIMONIAL PPT OF VAISHNAVI","https://i.ytimg.com/vi/hWRwcpMRsLk/default.jpg","hWRwcpMRsLk"));
+//        stories.add(new Story("TESTIMONIAL VIDEO OF V SUDARSHAN","https://i.ytimg.com/vi/ReKc7YofkNw/default.jpg","ReKc7YofkNw"));
+//        stories.add(new Story("TESTIMONIAL OF HEENA","https://i.ytimg.com/vi/bnEcXq2ZxCo/default.jpg","bnEcXq2ZxCo"));
+//        stories.add(new Story("TESTIMONIAL OF SAUMYA SACHDEVA","https://i.ytimg.com/vi/eJW0gMJdNy0/default.jpg","eJW0gMJdNy0"));
+//        stories.add(new Story("TESTIMONIAL OF SONAL MAKKER","https://i.ytimg.com/vi/SxQAGFtqUQw/default.jpg","SxQAGFtqUQw"));
         //sendR("https://www.googleapis.com/youtube/v3/search?key="+API_KEY+"&channelId="+CHANNEL_ID+"&part=snippet,id&order=date&maxResults=20");
-        clientStoryAdapter = new ClientStoryAdapter(stories,CustomerStories.this);
-        LinearLayoutManager mLayoutManager = new LinearLayoutManager(CustomerStories.this,LinearLayoutManager.HORIZONTAL,false);
-        recyclerView.setLayoutManager(mLayoutManager);
-        recyclerView.setAdapter(clientStoryAdapter);
-        clientStoryAdapter.notifyDataSetChanged();
-        dialog.cancel();
+
         recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), recyclerView, new ClickListener() {
             @Override
             public void onClick(View view, int position) {
@@ -111,6 +107,60 @@ public class CustomerStories extends YouTubeBaseActivity implements YouTubePlaye
             player.loadVideo(VIDEO_ID);
             title.setText(mTitle);
         }
+    }
+
+
+    public void sendR(String url)
+    {
+        dialog.setMessage("Loading...");
+        dialog.show();
+
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+
+                        try {
+                            JSONArray array = new JSONArray(response);
+                            for (int i=0;i<array.length();i++) {
+                                JSONObject object = array.getJSONObject(i);
+                                String link = object.getString("link");
+                                String[] words = link.split("/");
+                                Log.d("youtube api link",words[4]);
+                                String title = object.getString("title");
+                                if(title.equals("")){
+                                    title+="Client Story";
+                                }
+                                stories.add(new Story(title,"https://i.ytimg.com/vi/"+words[4]+"/default.jpg",words[4]));
+
+                            }
+                            clientStoryAdapter = new ClientStoryAdapter(stories,CustomerStories.this);
+                            LinearLayoutManager mLayoutManager = new LinearLayoutManager(CustomerStories.this,LinearLayoutManager.HORIZONTAL,false);
+                            recyclerView.setLayoutManager(mLayoutManager);
+                            recyclerView.setAdapter(clientStoryAdapter);
+                            clientStoryAdapter.notifyDataSetChanged();
+                            dialog.cancel();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(getApplicationContext(),error.toString(),Toast.LENGTH_LONG).show();
+                    }
+                }){
+
+
+        };
+
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        requestQueue.add(stringRequest);
+
     }
 
     private PlaybackEventListener playbackEventListener = new PlaybackEventListener() {

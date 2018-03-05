@@ -88,25 +88,26 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".DashBoard" />
         </activity>
-        <activity android:name=".CustomerStories"
+        <activity
+            android:name=".CustomerStories"
             android:parentActivityName=".DashBoard">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".DashBoard" />
         </activity>
 
-        <service
-            android:name=".utils.MyFirebaseInstanceIdService">
+        <service android:name=".utils.MyFirebaseInstanceIdService">
             <intent-filter>
-                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
-        <service
-            android:name=".utils.MyFirebaseMessagingService">
+        <service android:name=".utils.MyFirebaseMessagingService">
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+
+        <activity android:name=".SignUp"></activity>
     </application>
 
 </manifest>

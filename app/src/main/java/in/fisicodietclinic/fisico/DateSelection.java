@@ -214,8 +214,6 @@ public class DateSelection extends AppCompatActivity {
                                 dateList.add(datesOBJECT);
 
 
-
-
                             }
 
                             //adapter = new GridAdapter(getApplicationContext(), dateList);

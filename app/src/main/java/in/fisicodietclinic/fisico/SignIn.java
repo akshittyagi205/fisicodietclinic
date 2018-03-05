@@ -1,15 +1,19 @@
 package in.fisicodietclinic.fisico;
 
 import android.app.ProgressDialog;
+import android.content.ActivityNotFoundException;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -28,11 +32,12 @@ import java.util.Map;
 public class SignIn extends AppCompatActivity {
     EditText userName, password;
     public static final String MyPREFERENCES = "MyPrefs" ;
-    Button proceed;
+    Button proceed,signup;
     String url = "https://fisicodietclinic.herokuapp.com/loginapi/";
     String msg,user_var,pass_var;
     int res,user_id;
-ProgressDialog dialog;
+    TextView forgotPass;
+    ProgressDialog dialog;
     String user_name;
     SharedPreferences sharedpreferences;
     @Override
@@ -44,8 +49,22 @@ ProgressDialog dialog;
         userName.requestFocus();
         dialog = new ProgressDialog(this);
         password = (EditText) findViewById(R.id.password_edit);
+        forgotPass = (TextView) findViewById(R.id.forgotPass);
+        forgotPass.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openChrome("https:fisicodietclinic.herokuapp.com/password_reset/");
+            }
+        });
         proceed = (Button) findViewById(R.id.buttonProceed);
-
+        signup = (Button) findViewById(R.id.signupBtn);
+        signup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+                startActivity(new Intent(SignIn.this,SignUp.class));
+            }
+        });
         proceed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -63,12 +82,23 @@ ProgressDialog dialog;
     }
 
 
-
-
+    public  void openChrome(String url)
+    {
+        try {
+            Intent i = new Intent("android.intent.action.MAIN");
+            i.setComponent(ComponentName.unflattenFromString("com.android.chrome/com.android.chrome.Main"));
+            i.addCategory("android.intent.category.LAUNCHER");
+            i.setData(Uri.parse(url));
+            startActivity(i);
+        }
+        catch(ActivityNotFoundException e) {
+            // Chrome is not installed
+            Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+            startActivity(i);
+        }
+    }
     public int sendR(final String username, final String password)
     {
-
-
         dialog.setMessage("Loading...");
         dialog.show();
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
